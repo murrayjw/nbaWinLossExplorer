@@ -3,7 +3,7 @@
     "path": "~/nbaWinLossExplorer/R/data_utils.R",
     "project_path": "R/data_utils.R",
     "type": "r_source",
-    "hash": "2172297980",
+    "hash": "0",
     "contents": "",
     "dirty": false,
     "created": 1623776978797.0,
@@ -11,15 +11,15 @@
     "relative_order": 3,
     "properties": {
         "tempName": "Untitled1",
-        "cursorPosition": "289,62",
-        "scrollLine": "275"
+        "cursorPosition": "60,0",
+        "scrollLine": "60"
     },
     "folds": "",
     "lastKnownWriteTime": 1623777537,
     "encoding": "UTF-8",
     "collab_server": "",
     "source_window": "",
-    "last_content_update": 1623777547459,
+    "last_content_update": 1623777682879,
     "read_only": false,
     "read_only_alternatives": []
 }
