@@ -1,13 +1,9 @@
 Package: nbaWinLossExplorer
-Title: An Amazing Shiny App
+Title: NBA Win Loss Explorer
 Version: 0.0.0.9000
-Authors@R: 
-    person(given = "firstname",
-           family = "lastname",
-           role = c("aut", "cre"),
-           email = "your@email.com")
-Description: What the package does (one paragraph).
-License: What license is it under?
+Authors@R: person('Joshua', 'Murray', email = 'joshua.murray@utoronto.ca', role = c('cre', 'aut'))
+Description: A Shiny application to explore expected wins and losses from any point in an NBA season using historical performance data.
+License: MIT + file LICENSE
 Imports: 
     config (>= 0.3),
     golem (>= 0.3.1),

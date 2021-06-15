@@ -21,7 +21,7 @@
 golem::fill_desc(
   pkg_name = "nbaWinLossExplorer", # The Name of the package containing the App 
   pkg_title = "NBA Win Loss Explorer", # The Title of the package containing the App 
-  pkg_description = "A Shiny application to explore expected wins and losses from any point in an NBA season using historical performance data", # The Description of the package containing the App 
+  pkg_description = "A Shiny application to explore expected wins and losses from any point in an NBA season using historical performance data.", # The Description of the package containing the App 
   author_first_name = "Joshua", # Your First Name
   author_last_name = "Murray", # Your Last Name
   author_email = "joshua.murray@utoronto.ca", # Your Email
@@ -33,7 +33,7 @@ golem::set_golem_options()
 
 ## Create Common Files ----
 ## See ?usethis for more information
-usethis::use_mit_license( "Golem User" )  # You can set another license here
+usethis::use_mit_license( "Joshua Murray" )  # You can set another license here
 usethis::use_readme_rmd( open = FALSE )
 usethis::use_code_of_conduct()
 usethis::use_lifecycle_badge( "Experimental" )

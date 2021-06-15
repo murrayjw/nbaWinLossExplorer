@@ -1,2 +1,7 @@
 ~%2FnbaWinLossExplorer%2F.Rbuildignore="8D4D8A1F"
+~%2FnbaWinLossExplorer%2FR%2Fapp_config.R="36347F9C"
+~%2FnbaWinLossExplorer%2FR%2Fapp_server.R="3BF6BB40"
+~%2FnbaWinLossExplorer%2FR%2Fapp_ui.R="6F324210"
+~%2FnbaWinLossExplorer%2FR%2Frun_app.R="49787D7E"
 ~%2FnbaWinLossExplorer%2Fdev%2F01_start.R="064611DC"
+~%2FnbaWinLossExplorer%2Fdev%2F02_dev.R="F7F0657D"
