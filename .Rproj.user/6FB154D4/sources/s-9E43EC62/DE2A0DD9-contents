@@ -29,7 +29,7 @@ clean_list_data <- function(data) {
                                       }))
   
   unlist_data <- unlist_data %>%
-    mutate_at(which(num_vars == 1), as.numeric)
+    dplyr::mutate_at(which(num_vars == 1), as.numeric)
   
   return(unlist_data)
 }
@@ -56,10 +56,16 @@ list_to_tibble <- function(l) {
 
 #' Get current NBA standings
 #'
+#'
+#'@param season a string in the format YYYY-YY (e.g. '2020-21'). 
+#'default is the current season.
+#'
 #'@details scrapes the nba.com/stats website for current
 #'nba standings
-get_current_standings <- function() {
+#'
+get_current_standings <- function(season = get_current_season_input()) {
   
+  validate_season_input(season)
   base_url <- 'https://stats.nba.com/stats/leaguestandingsv3'
   df <- httr::GET(base_url,
                   httr::add_headers(.headers = c( 'User-Agent'= 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/86.0.4240.193 Safari/537.36',
@@ -70,13 +76,74 @@ get_current_standings <- function() {
                                                   'Origin'='https://www.nba.com',
                                                   'Referer'='https://www.nba.com/')),
                   query = list(LeagueID = '00',
-                               Season = '2020-21',
+                               Season = season,
                                SeasonType = 'Regular Season'))
   json_data <- httr::content(df)
   
   df <- lapply(json_data$resultSets, clean_list_data)[[1]]
   
   return(df)
+  
+}
+
+get_current_season_input <- function() {
+  
+  date <- Sys.Date()
+  
+  if(lubridate::month(date) < 11) {
+    season_end_str <-lubridate::year(date)
+    season_start_str <- lubridate::year(date) - 1
+    
+    season_str <- paste0(season_start_str, "-",
+                         substr(season_end_str, 3, 4))
+     return(season_str)
+  } else {
+    season_start_str <- lubridate::year(date) 
+    season_end_str <-lubridate::year(date) + 1
+    
+    
+    season_str <- paste0(season_start_str, "-",
+                         substr(season_end_str, 3, 4))
+  }
+  
+}
+
+
+validate_season_input <- function(season) {
+  
+  if(nchar(season) != 7) {
+    
+    stop ("Season input wrong lenght. Season input in correct format: 'YYYY-YY'")
+    
+  } else if(grepl("-", season)) {
+    
+    stop("Season input missing hyphen. Season input in correct format: 'YYYY-YY'")
+    
+  } else  {
+    format_str <- strsplit(season, "-")
+    
+    # check one season
+    year_start <- as.numeric(substr(format_str[[1]][1], 3, 4))
+    year_end <- as.numeric(format_str[[1]][2])
+    season_diff <-  year_end - year_start
+    
+    
+    
+    if(season_diff != 1) {
+      stop("please supply one season")
+    }
+    
+    # check valid seasons
+    if (year_start < 1947) {
+      stop('First available season is 1947-48')
+    }
+    
+    if (year_start > as.numeric(strsub(get_current_season_input(), 1, 4))) {
+      stop("Input season is greater than the current season")
+    }
+    
+    
+  } 
   
 }
 

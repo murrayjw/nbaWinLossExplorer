@@ -4,7 +4,11 @@
 \alias{get_current_standings}
 \title{Get current NBA standings}
 \usage{
-get_current_standings()
+get_current_standings(season = get_current_season_input())
+}
+\arguments{
+\item{season}{a string in the format YYYY-YY (e.g. '2020-21'). 
+default is the current season.}
 }
 \description{
 Get current NBA standings

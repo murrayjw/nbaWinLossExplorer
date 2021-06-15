@@ -1,4 +1,5 @@
 ~%2FnbaWinLossExplorer%2F.Rbuildignore="8D4D8A1F"
+~%2FnbaWinLossExplorer%2FDESCRIPTION="B896EC53"
 ~%2FnbaWinLossExplorer%2FR%2Fapp_config.R="36347F9C"
 ~%2FnbaWinLossExplorer%2FR%2Fapp_server.R="3BF6BB40"
 ~%2FnbaWinLossExplorer%2FR%2Fapp_ui.R="6F324210"
@@ -10,5 +11,6 @@
 ~%2FnbaWinLossExplorer%2Fdev%2Frun_dev.R="251C3546"
 ~%2FnbaWinLossExplorer%2Ftests%2Fspelling.R="1B715F3A"
 ~%2FnbaWinLossExplorer%2Ftests%2Ftest-data-utils.R="9225E77B"
+~%2FnbaWinLossExplorer%2Ftests%2Ftestthat%2Ftest-data-utils.R="3F02F750"
 ~%2FnbaWinLossExplorer%2Ftests%2Ftestthat%2Ftest-golem-recommended.R="CB01799A"
 ~%2FnbaWinLossExplorer%2Ftests%2Ftestthat.R="1C34FADE"
