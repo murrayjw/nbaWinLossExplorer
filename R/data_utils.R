@@ -123,8 +123,9 @@ validate_season_input <- function(season) {
     format_str <- strsplit(season, "-")
     
     # check one season
-    year_start <- as.numeric(substr(format_str[[1]][1], 3, 4))
-    year_end <- as.numeric(format_str[[1]][2])
+    year_start <- as.numeric(format_str[[1]][1])
+    year_end <- as.numeric(paste0(substr(format_str[[1]][1], 1, 2),
+                                  format_str[[1]][2]))
     season_diff <-  year_end - year_start
     
     
@@ -138,7 +139,7 @@ validate_season_input <- function(season) {
       stop('First available season is 1947-48')
     }
     
-    if (year_start > as.numeric(strsub(get_current_season_input(), 1, 4))) {
+    if (year_start > as.numeric(substr(get_current_season_input(), 1, 4))) {
       stop("Input season is greater than the current season")
     }
     
@@ -193,9 +194,9 @@ prepare_standings_data <- function(records) {
            road, l10, strcurrentstreak,
            points_for, points_against,
            diff, record)%>%
-    arrange(playoffrank)
+    dplyr::arrange(playoffrank)
   
-  return_data <- tibble(eastern = eastern,
+  return_data <- dplyr::tibble(eastern = eastern,
                         western = western)
   
   return(return_data)

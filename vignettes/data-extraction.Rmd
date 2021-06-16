@@ -1,0 +1,288 @@
+---
+title: "Data Extraction"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Data for analysis
+
+This project uses the results of all NBA seasons from 1948-2021. We use the [nbastatR package](https://github.com/abresler/nbastatR), and in particular the `game_logs()` function to extract the results of every game in that period. We also extract playoff results to determine which teams actually made the playoffs. 
+
+
+Below I extract and save the raw data using `nbastatR`.
+
+```{r extract-raw, warning=F, message=F}
+
+# load libraries ----------------------------------------------------------
+library(tidyverse)
+library(nbastatR)
+library(future)
+library(janitor)
+
+# the seasons we want to extract data for
+seasons <- 1948:2020
+
+# for parallel processing
+plan(multiprocess)
+
+nba_season_data <- nbastatR::game_logs(seasons = seasons,
+                             result_types = "team",
+                             season_types = "Regular Season",
+                             return_message = F)
+nba_playoff_data <- nbastatR::game_logs(seasons = seasons,
+                              result_types = "team",
+                              season_types = "Playoffs",
+                              return_message = F)
+
+# save the raw data
+
+save(nba_season_data, file = here::here("raw-data", "nba_season_data.Rda"))
+save(nba_playoff_data, file = here::here("raw-data", "nba_playoff_data.Rda"))
+```
+
+
+
+Next we do some data cleaning and summarizing. First we use the `janitor` package to clean up the variable names. Then we summarize the playoff game logs to determine which teams made the playoffs. 
+
+For the regular season game logs, we:
+
+- create a game number variable
+- create a cumulative wins variable
+- create a cumulative loss variable
+- create a current record variable (format W-L). 
+
+We then do a right join with the playoff data. If a team has no playoff data, then they did not make the playoffs (setting `made_playoffs = 0`).
+
+Finally we create summary variables for team and season:
+- `id`: paste together the team name and season
+- `final_record`: the team's final win loss record at the end of the season
+- `final_wins`: the team's total win count at the end of the season
+- `final_losses`: the team's total loss count at the end of the season
+- `final_pm` : the plus minus differential at the end of the season. 
+- `plus_minus_pre`: the cumulative plus minus differential prior to the game result represented in the current row of the data.
+- `plus_minus_post`: the cumulative plus minus differential after the game 
+result represented in the current row of the data. 
+
+The data is saved as a .csv file. 
+
+```{r}
+
+# clean var names
+nba_season_data <- janitor::clean_names(nba_season_data)
+nba_playoff_data <- janitor::clean_names(nba_playoff_data)
+
+# which teams made the playoffs each season
+nba_made_playoffs <- nba_playoff_data %>%
+  distinct(year_season, id_team, name_team) %>%
+  mutate(made_playoffs = 1)
+
+# add some additional variables
+nba_season_data <- nba_season_data%>%
+  group_by(year_season, name_team) %>%
+  arrange(date_game) %>%
+  mutate(game_number = 1:n(),
+         wins = cumsum(is_win),
+         losses = game_number - wins,
+         record = paste0(wins, "-", losses)) %>%
+  select(name_team, year_season, slug_season,
+         number_game_team_season, date_game,
+         id_team, location_game,
+         slug_matchup,
+         url_team_season_logo,
+         wins, losses, record, plus_minus = plusminus_team) %>%
+  ungroup()
+
+
+# join season data with playoffs data and create playoff indicator
+nba_season_data <- nba_season_data %>%
+  left_join(nba_made_playoffs, by = c("name_team", "year_season", "id_team")) %>%
+  mutate(made_playoffs = ifelse(is.na(made_playoffs), 0, 1))
+
+
+# add some season long information into the data
+nba_season_data <- nba_season_data %>%
+  group_by(id_team, year_season) %>%
+  arrange(date_game) %>%
+  mutate(id= paste(name_team, year_season), 
+         final_record = record[n()],
+         final_wins = wins[n()],
+         final_losses = losses[n()],
+         final_pm = sum(plus_minus),
+         plus_minus_pre = cumsum(plus_minus) - plus_minus,
+         plus_minus_post = cumsum(plus_minus)) %>%
+  ungroup()
+
+# write as .csv file
+readr::write_csv(nba_season_data, here::here('data', 'nba_season_data.csv'))
+usethis::use_data(nba_season_data)
+
+```
+
+
+## Data Exploration
+
+Here we explore the data a little, to get a better understanding of what is available. 
+
+First a look at the first observations:
+
+```{r data-table}
+
+DT::datatable(head(nba_season_data), options=list(scrollX=T))
+
+```
+
+
+We can plot the total number of wins agains the game number of the season for each team and season. 
+
+```{r season-plot}
+season_plot <- nba_season_data %>%
+            ggplot(aes(number_game_team_season, wins, color = id)) +
+            geom_line() +
+            labs(x = "Game number of season",
+                 y = "Number of wins")  +
+            theme_minimal()+
+            theme(legend.position='none') +
+            theme(axis.text.x = element_text(colour = "#006bb8"),
+                  axis.text.y = element_text(colour = "#006bb8"),
+                  axis.title.x = element_text(colour = "#032f4f"),
+                  axis.title.y = element_text(colour = "#032f4f"))
+
+season_plotly <- plotly::ggplotly(season_plot)
+season_plotly
+```
+
+The team with the best record of all time are the 2016 Golden State Warriors (73 wins), while the team with the worst record are the 1973 Philadelphia 76ers with 9 wins. 
+
+
+## Results to end of year
+
+What we are ultimately interested in, is cutting off the a season at some mark (say the 10 game mark), and determining likely outcomes for teams based on 
+
+1. Their record at the time
+2. Their plus minus differential at that time. 
+
+The reason for including plus minus is because not all bad teams are the same. Some teams catch a lot of bad breaks and end up with a losing record despite scoring as many or more points than their opponents over the course of the season (see 2021 Raptors).
+
+Let's look at one example. Let's look at all teams that started their season with 5 wins and 5 loses, with a plus minus between -10 and + 10. 
+
+
+```{r example}
+ acceptable_records <- nba_season_data %>%
+            mutate(contains_record = (wins == 5) &
+                       (losses == 5) &
+                       (plus_minus_post >= -10 ) &
+                       (plus_minus_post <= 10)) %>%
+            group_by(name_team, year_season) %>%
+            arrange(date_game) %>%
+            mutate(keep = max(contains_record)) %>%
+            filter(keep > 0) %>%
+            ungroup()
+
+```
+
+Now let's recreate the same plot as above
+
+```{r example-plot}
+example_season_plot <- acceptable_records %>%
+            ggplot(aes(number_game_team_season, wins, color = id)) +
+            geom_line() +
+            labs(x = "Game number of season",
+                 y = "Number of wins")  +
+            theme_minimal()+
+            theme(legend.position='none') +
+            theme(axis.text.x = element_text(colour = "#006bb8"),
+                  axis.text.y = element_text(colour = "#006bb8"),
+                  axis.title.x = element_text(colour = "#032f4f"),
+                  axis.title.y = element_text(colour = "#032f4f"))
+
+example_season_plotly <- plotly::ggplotly(example_season_plot)
+example_season_plotly
+
+```
+
+We can see the lines cross where every team was 5-5. Now we can calculate some sample statistics. 
+
+```{r stats}
+
+season_summary <- acceptable_records %>% 
+  group_by(id) %>% 
+  slice(1) %>% 
+  ungroup()
+  
+# how many teams match the requirements
+nrow(season_summary)
+
+# what proportion make the playoffs
+sum(season_summary$made_playoffs)/nrow(season_summary)
+
+# distribution of wins and losses at the end of the season
+summary(season_summary$final_wins)
+summary(season_summary$final_losses)
+
+```
+
+
+We can see that `r nrow(season_summary)` teams match these requirements, with 65.8% making the playoffs. The median number of wins is 40 (IQR 34.5-48.0) and median number of losses of 39 (33.0-45.0). So on average, teams finish with roughly the same number of wins and losses.
+
+Let's make a small change, where we look at teams starting with a 5-5 record, with a plus minus of 20 or greater. So in this case, teams that have scored many more points than their opponents. 
+
+
+```{r example2}
+ acceptable_records <- nba_season_data %>%
+            mutate(contains_record = (wins == 5) &
+                       (losses == 5) &
+                       (plus_minus_post >= 20)) %>%
+            group_by(name_team, year_season) %>%
+            arrange(date_game) %>%
+            mutate(keep = max(contains_record)) %>%
+            filter(keep > 0) %>%
+            ungroup()
+
+```
+
+
+```{r example-plot2}
+example_season_plot <- acceptable_records %>%
+            ggplot(aes(number_game_team_season, wins, color = id)) +
+            geom_line() +
+            labs(x = "Game number of season",
+                 y = "Number of wins")  +
+            theme_minimal()+
+            theme(legend.position='none') +
+            theme(axis.text.x = element_text(colour = "#006bb8"),
+                  axis.text.y = element_text(colour = "#006bb8"),
+                  axis.title.x = element_text(colour = "#032f4f"),
+                  axis.title.y = element_text(colour = "#032f4f"))
+
+example_season_plotly <- plotly::ggplotly(example_season_plot)
+example_season_plotly
+
+```
+
+We can see the lines cross where every team was 5-5. Now we can calculate some sample statistics. 
+
+```{r example-stats2}
+
+season_summary <- acceptable_records %>% 
+  group_by(id) %>% 
+  slice(1) %>% 
+  ungroup()
+  
+# how many teams match the requirements
+nrow(season_summary)
+
+# what proportion make the playoffs
+sum(season_summary$made_playoffs)/nrow(season_summary)
+
+# distribution of wins and losses at the end of the season
+summary(season_summary$final_wins)
+summary(season_summary$final_losses)
+
+```
+
+In this case we get 69 records, with 75.3% making the playoffs, median number of wins of 44 (IQR 39.0 - 49.0) and median number of losses of 36 (IQR 30.0-41.0). So we found a subset of teams that have the same starting record, but a higher end of season expectation. 
+
+Using the simple method above we can build a simple shiny application that allows users to play with those simple inputs and explore how historical teams have performed. 

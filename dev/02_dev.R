@@ -21,11 +21,14 @@ usethis::use_package("plotly")
 usethis::use_package("dplyr")
 usethis::use_package("reactable")
 usethis::use_package("httr")
+usethis::use_package("nbastatR")
+usethis::use_package("shinydashboard")
+usethis::use_package("here")
 
 usethis::use_pipe()
 ## Add modules ----
 ## Create a module infrastructure in R/
-golem::add_module( name = "name_of_module1" ) # Name of the module
+golem::add_module( name = "standings" ) # Name of the module
 golem::add_module( name = "name_of_module2" ) # Name of the module
 
 ## Add helper functions ----

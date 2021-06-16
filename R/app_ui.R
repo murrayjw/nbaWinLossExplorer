@@ -3,14 +3,49 @@
 #' @param request Internal parameter for `{shiny}`. 
 #'     DO NOT REMOVE.
 #' @import shiny
+#' @import shinydashboard
 #' @noRd
 app_ui <- function(request) {
   tagList(
     # Leave this function for adding external resources
     golem_add_external_resources(),
     # Your application UI logic 
-    fluidPage(
-      h1("nbaWinLossExplorer")
+    dashboardPage(
+      
+      # Header page
+      dashboardHeader(title = "NBA Win/Loss Record Explorer"),
+      
+      # Sidebar page
+      dashboardSidebar(
+        sidebarMenu(
+          menuItem("Current NBA record", tabName = "current", icon = icon("dashboard")),
+          menuItem("Historical Record Explorer", icon = icon("th"),
+                   tabName = "historical", badgeColor = "green")
+        )
+      ),
+      
+      dashboardBody(
+        tabItems(
+          tabItem(tabName = "current",
+                  fluidRow(
+                    tabBox(width = 10,
+                           title = "Standings",
+                           id = "tabset1",
+                           tabPanel("Eastern Conference Standings",
+                            mod_standings_ui("eastern_ui")
+                           ),
+                           tabPanel("Western Conference Standings",
+                                    mod_standings_ui("western_ui")
+                           )
+                    )
+                  )),
+          
+          tabItem(tabName = "historical",
+                  h2("Historical Records")
+          )
+        )
+      )
+      
     )
   )
 }
