@@ -203,6 +203,9 @@ prepare_standings_data <- function(records) {
   
 }
 
+
+
+
 #' Create a reactable for the app
 #'
 #' @param data either the eastern or western conference
@@ -349,24 +352,28 @@ get_record_summary <- function(data) {
     dplyr::arrange(as.numeric(sapply(strsplit(record, '-'), '[[', 1)))
 }
 
-#' Get historical NBA matches
+#' Get matching records
 #' 
-#' @details for a given input record (e.g. 3-4), 
-#' extract all teams with a matching record in NBA history
+#' @description Given inputs from the shiny application, extract
+#' all matching historical records
 #' 
-#' @param data all historical nba results
-#' @param current_records the input record to match (e.g. '5-1')
-get_historical_matching_records <- function(data, current_records) {
-  data <- data %>%
-    dplyr::mutate(contains_record = ifelse(record %in% current_records, 1, 0)) %>%
+#' 
+get_matching_records <- function(data, 
+                                 input_wins,
+                                 input_losses,
+                                 input_plus_minus_min,
+                                 input_plus_minus_max) {
+  data %>%
+    dplyr::mutate(contains_record = (wins == input_wins) &
+             (losses == input_losses) &
+             (plus_minus_post >= input_plus_minus_min ) &
+             (plus_minus_post <= input_plus_minus_max)) %>%
     dplyr::group_by(name_team, year_season) %>%
     dplyr::arrange(date_game) %>%
-    dplyr::mutate(keep = cumsum(contains_record)) %>%
+    dplyr::mutate(keep = max(contains_record)) %>%
     dplyr::filter(keep > 0) %>%
-    dplyr::group_by(name_team, year_season) %>%
-    dplyr::mutate(starting_record = record[row_number() == 1]) %>%
-    dplyr::ungroup() %>%
-    dplyr::mutate(id = paste(name_team, year_season))
+    dplyr::ungroup()
+  
 }
 
 

@@ -29,7 +29,10 @@ usethis::use_pipe()
 ## Add modules ----
 ## Create a module infrastructure in R/
 golem::add_module( name = "standings" ) # Name of the module
-golem::add_module( name = "name_of_module2" ) # Name of the module
+golem::add_module( name = "sim_inputs" ) # Name of the module
+golem::add_module( name = "value_box" ) # Name of the module
+golem::add_module( name = "datatable" ) # Name of the module
+golem::add_module( name = "plotly_display" ) # Name of the module
 
 ## Add helper functions ----
 ## Creates fct_* and utils_*

@@ -41,7 +41,30 @@ app_ui <- function(request) {
                   )),
           
           tabItem(tabName = "historical",
-                  h2("Historical Records")
+                  h2("Historical Records"),
+                  fluidRow(
+                    column(width = 4,
+                    mod_sim_inputs_ui("sim_inputs_ui_1"),
+                    mod_value_box_ui("value_box_matching_records")
+                    ),
+                    column(width = 8,
+                           tabBox(id = "tabs2", width = 12,
+                                  height = '500px',
+                                  title = "Results",
+                                  tabPanel(title = "Matching Seasons",
+                                           mod_datatable_ui("datatable_ui_1")),
+                                  tabPanel(title  = "Summary",
+                                           br(),
+                                           mod_value_box_ui("value_box_wins"),
+                                           mod_value_box_ui("value_box_losses"),
+                                           mod_value_box_ui("value_box_playoffs")),
+                                  tabPanel(title  = "Plot",
+                                           br(),
+                                           mod_plotly_display_ui("plotly_display_ui_1"))
+                                  
+                           )
+                    )
+                  )
           )
         )
       )
