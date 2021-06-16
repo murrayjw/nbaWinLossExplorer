@@ -27,7 +27,10 @@ mod_datatable_server <- function(id, data){
       df <- data()
       matching_data_sum <- df$matching_data_sum
       
-      DT::datatable(matching_data_sum, options = list(scrollX=T),
+      DT::datatable(matching_data_sum,
+                    options = list(scrollX=T, 
+                                   pageLength = 20,
+                                   scrollY = "300px"),
                     caption = "Summary of historical team performance")
       
     })

@@ -60,7 +60,8 @@ app_ui <- function(request) {
                                            mod_value_box_ui("value_box_playoffs")),
                                   tabPanel(title  = "Plot",
                                            br(),
-                                           mod_plotly_display_ui("plotly_display_ui_1"))
+                                           shinycustomloader::withLoader(mod_plotly_display_ui("plotly_display_ui_1"),
+                                                                         type="html", loader="loader1"))
                                   
                            )
                     )

@@ -24,6 +24,7 @@ usethis::use_package("httr")
 usethis::use_package("nbastatR")
 usethis::use_package("shinydashboard")
 usethis::use_package("here")
+usethis::use_package("shinycustomloader")
 
 usethis::use_pipe()
 ## Add modules ----
