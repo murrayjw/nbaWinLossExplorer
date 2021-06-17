@@ -280,52 +280,7 @@ create_standings_table <- function(data, select = NULL) {
 }
 
 
-#' Create a reactable from matching historical records
-#' @param data a records object of matching data
-#'
-create_historical_table <- function(data){
-  
-  reactable::reactable(data,
-            defaultColDef = colDef(
-              sortNALast = TRUE,
-              minWidth = 45,
-              class = JS("function(rowInfo, colInfo, state) {
-        // Highlight sorted columns
-        for (var i = 0; i < state.sorted.length; i++) {
-          if (state.sorted[i].id === colInfo.id) {
-            return 'sorted'
-          }
-        }
-      }"),
-              headerClass = "box-score-header",
-              
-            ),
-            columns = list(
-              matching_records = colDef(name = "HISTORICAL MATCHES", width = 100),
-              wins = colDef(cell = function(values, index) {
-                sparkline(matching_records_sum$wins_list[[index]],
-                          type = "box")
-              }),
-              losses = colDef(cell = function(values, index) {
-                sparkline(data$losses_list[[index]],
-                          type = "box")
-              }),
-              made_playoffs = colDef(name = 'MADE PLAYOFFS',
-                                     format = colFormat(percent = TRUE, digits = 1)),
-              losses_list = colDef(show = F),
-              wins_list = colDef(show = F),
-              best = colDef(class = 'best-worst',
-                            name = "BEST RECORD"),
-              worst = colDef(class = 'best-worst',
-                             name = "WORST RECORD")
-            ),
-            class = "box-score-tbl",
-            defaultPageSize = 15,
-            showSortIcon = FALSE,
-            highlight = TRUE,
-            striped = TRUE)
-  
-}
+
 
 #' Summarize results for NBA W/L record
 #' 

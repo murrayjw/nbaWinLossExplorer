@@ -1,0 +1,10 @@
+name: nbawinlossexplorer
+title:
+username:
+account: joshmurray
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 4282397
+bundleId: 4725523
+url: https://joshmurray.shinyapps.io/nbawinlossexplorer/
+when: 1623899198.07876
