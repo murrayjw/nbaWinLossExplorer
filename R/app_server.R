@@ -52,6 +52,16 @@ app_server <- function( input, output, session ) {
                        data = get_data,
                        color = "fuchsia")
   
+  mod_value_box_server("value_box_best_case",
+                       type="best_case",
+                       data = get_data,
+                       color = "teal")
+  
+  mod_value_box_server("value_box_worst_case",
+                       type="worst_case",
+                       data = get_data,
+                       color = "yellow")
+  
   mod_datatable_server("datatable_ui_1",
                        data = get_data)
   

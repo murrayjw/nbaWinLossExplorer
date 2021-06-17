@@ -276,7 +276,7 @@ create_standings_table <- function(data, select = NULL) {
             striped = TRUE,
             class = "box-score-tbl",
             defaultPageSize = 15,
-            height = 650, selection = select)
+            height = 650)
 }
 
 
@@ -363,17 +363,31 @@ get_matching_records <- function(data,
                                  input_losses,
                                  input_plus_minus_min,
                                  input_plus_minus_max) {
-  data %>%
-    dplyr::mutate(contains_record = (wins == input_wins) &
-             (losses == input_losses) &
-             (plus_minus_post >= input_plus_minus_min ) &
-             (plus_minus_post <= input_plus_minus_max)) %>%
-    dplyr::group_by(name_team, year_season) %>%
-    dplyr::arrange(date_game) %>%
-    dplyr::mutate(keep = max(contains_record)) %>%
-    dplyr::filter(keep > 0) %>%
-    dplyr::ungroup()
   
+  if(input_wins == 0 & input_losses == 0) {
+    matching_records <- data %>%
+      dplyr::mutate(contains_record = 
+                      (plus_minus_post >= input_plus_minus_min ) &
+                      (plus_minus_post <= input_plus_minus_max)) %>%
+      dplyr::group_by(name_team, year_season) %>%
+      dplyr::arrange(date_game) %>%
+      dplyr::mutate(keep = max(contains_record)) %>%
+      dplyr::filter(keep > 0) %>%
+      dplyr::ungroup()
+  } else {
+    matching_records <- data %>%
+      dplyr::mutate(contains_record = (wins == input_wins) &
+                      (losses == input_losses) &
+                      (plus_minus_post >= input_plus_minus_min ) &
+                      (plus_minus_post <= input_plus_minus_max)) %>%
+      dplyr::group_by(name_team, year_season) %>%
+      dplyr::arrange(date_game) %>%
+      dplyr::mutate(keep = max(contains_record)) %>%
+      dplyr::filter(keep > 0) %>%
+      dplyr::ungroup()
+  }
+  
+  return(matching_records)
 }
 
 

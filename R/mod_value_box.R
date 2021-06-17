@@ -7,11 +7,11 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
-mod_value_box_ui <- function(id){
+mod_value_box_ui <- function(id, width){
   ns <- NS(id)
   tagList(
     
-    shinydashboard::valueBoxOutput(ns("statistic"), width = 8)
+    shinydashboard::valueBoxOutput(ns("statistic"), width = width)
     
   )
 }
@@ -57,8 +57,8 @@ mod_value_box_server <- function(id, type, data, color = "olive"){
                            paste0("(", q25_wins, "-", q75_wins, ")"))
         shinydashboard::valueBox(
           value = win_value,
-          subtitle = "Median Wins in all matching seasons (IQR)",
-          icon = icon("thumbs-up", lib = "glyphicon"),
+          subtitle = "Median wins in all matching seasons (IQR)",
+          icon = icon("wine-bottle"),
           color = color
         )
       })
@@ -80,8 +80,8 @@ mod_value_box_server <- function(id, type, data, color = "olive"){
         
         shinydashboard::valueBox(
           value = win_value,
-          subtitle = "Median Wins in all matching seasons (IQR)",
-          icon = icon("thumbs-up", lib = "glyphicon"),
+          subtitle = "Median losses in all matching seasons (IQR)",
+          icon = icon("window-close"),
           color = color
         )
       })
@@ -99,7 +99,50 @@ mod_value_box_server <- function(id, type, data, color = "olive"){
         shinydashboard::valueBox(
           value = playoff_percentage,
           subtitle = "Percentage of teams making the playoffs",
-          icon = icon("thumbs-up", lib = "glyphicon"),
+          icon = icon("play-circle"),
+          color = color
+        )
+      })
+      
+    } else if(type == "best_case") {
+      
+      output$statistic <- shinydashboard::renderValueBox({
+        
+        df <- data()
+        matching_data_sum <- df$matching_data_sum
+        
+        bt <- matching_data_sum %>% 
+          arrange(desc(wins)) %>% 
+          slice(1)
+        
+        txt <- glue::glue("{bt$id} with record of {bt$wins}-{bt$losses}")
+        
+        shinydashboard::valueBox(
+          value = "Best Result",
+          subtitle = txt,
+          icon = icon("smile"),
+          color = color
+        )
+      })
+      
+    } else if(type == "worst_case") {
+      
+      output$statistic <- shinydashboard::renderValueBox({
+        
+        df <- data()
+        matching_data_sum <- df$matching_data_sum
+        
+        bt <- matching_data_sum %>% 
+          arrange(desc(wins)) %>% 
+          slice(dplyr::n())
+        
+        txt <- glue::glue("{bt$id} with record of {bt$wins}-{bt$losses}")
+        
+        print(bt)
+        shinydashboard::valueBox(
+          value = "Worst Result",
+          subtitle = txt,
+          icon = icon("sad-tear"),
           color = color
         )
       })
