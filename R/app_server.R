@@ -6,12 +6,17 @@
 #' @noRd
 app_server <- function( input, output, session ) {
   
+  print('app starting test')
+  
   # global reactive values
-  r <- reactiveValues()
+  nba_season_data <- nbaWinLossExplorer::nba_season_data
+  
+  print(nba_season_data)
   
   # current NBA standings
   standings <- prepare_standings_data(nba_season_data)
   
+  print(standings)
   # Eastern Conference Standings
   callModule(mod_standings_server, 
              "eastern_ui",
