@@ -9,7 +9,7 @@
 #' @importFrom shiny NS tagList 
 #' @import ggplot2
 #' @import plotly
-#' 
+#' @export 
 mod_plotly_display_ui <- function(id){
   ns <- NS(id)
   tagList(
@@ -22,6 +22,7 @@ mod_plotly_display_ui <- function(id){
 #' plotly_display Server Functions
 #'
 #' @noRd 
+#' @export 
 mod_plotly_display_server <- function(id, data){
   
   moduleServer( id, function(input, output, session){

@@ -1,6 +1,8 @@
 #' Clean the NBA API data
 #' 
 #' @param data object returned from `get_current_standings()`
+#' 
+#' @export 
 clean_list_data <- function(data) {
   
   var_names <- tolower(unlist(data$headers))
@@ -40,7 +42,7 @@ clean_list_data <- function(data) {
 #' @param l a list
 #' 
 #' @return a tibble
-
+#' @export 
 list_to_tibble <- function(l) {
   df <- do.call(rbind, lapply(l, function(x) {
     ul <- unlist(x)
@@ -62,7 +64,7 @@ list_to_tibble <- function(l) {
 #'
 #'@details scrapes the nba.com/stats website for current
 #'nba standings
-#'
+#' @export 
 get_current_standings <- function(season = get_current_season_input()) {
   
   validate_season_input(season)
@@ -153,6 +155,7 @@ validate_season_input <- function(season) {
 #' @details scrapes data from nba.com/stats
 #' creates two tibbles, one for the eastern conference
 #' standings and western conference standings.
+#' @export 
 prepare_standings_data <- function(records) {
   
   
@@ -212,6 +215,7 @@ prepare_standings_data <- function(records) {
 #' standings tibble returned from `prepare_standings_data()`
 #' @param select an argument passed to reactable. Default
 #' is NULL. Other acceptible values are "single" and "multiple"
+#' @export 
 create_standings_table <- function(data, select = NULL) {
   reactable::reactable(data,
             defaultColDef = colDef(
@@ -290,6 +294,7 @@ create_standings_table <- function(data, select = NULL) {
 #'end of season results. 
 #'
 #'@return a tibble with summary records for each record  
+#'@export 
 get_record_summary <- function(data) {
   data %>%
     dplyr::group_by(record) %>%
@@ -312,7 +317,7 @@ get_record_summary <- function(data) {
 #' @description Given inputs from the shiny application, extract
 #' all matching historical records
 #' 
-#' 
+#'@export 
 get_matching_records <- function(data, 
                                  input_wins,
                                  input_losses,
@@ -345,41 +350,3 @@ get_matching_records <- function(data,
   return(matching_records)
 }
 
-
-plot_franchise_wins_losses <- function(records, team = "Toronto Raptors") {
-  
-  p <-  records %>%
-    dplyr::filter(name_team == team) %>%
-    dplyr::mutate(made_playoffs = ifelse(made_playoffs == 1, "Made Playoffs",
-                                  "Missed Playoffs")) %>%
-    dplyr::group_by(year_season) %>%
-    dplyr::slice(n()) %>%
-    ggplot2::ggplot(aes(wins, losses, color = made_playoffs)) +
-    ggplot2::geom_point() +
-    ggplot2::labs(color = "Made Playoffs",
-         title = "Wins vs. Losses each season",
-         subtitle = paste("For the", team))
-  
-  plotly::ggplotly(p)
-  
-}
-
-plot_diff_record <- function(records,
-                             current_record,
-                             diff = 3) {
-  
-  cc <-  records %>%
-    filter(record %in% current_record) %>%
-    group_by(name_team, year_season) %>%
-    slice(1) %>%
-    ungroup()
-  p <- cc %>%
-    ggplot(aes(plus_minus_pre)) +
-    geom_density() +
-    xlab("Total point differential") +
-    geom_vline(xintercept = diff) +
-    labs(title = paste0("Historical Differentials at time of ", current_record,
-                        " record"))
-  plotly::ggplotly(p)
-  
-}

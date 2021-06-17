@@ -7,6 +7,7 @@
 #' @noRd 
 #' @importFrom DT dataTableOutput renderDataTable
 #' @importFrom shiny NS tagList 
+#' @export 
 mod_datatable_ui <- function(id){
   ns <- NS(id)
   tagList(
@@ -19,6 +20,7 @@ mod_datatable_ui <- function(id){
 #' datatable Server Functions
 #'
 #' @noRd 
+#' @export 
 mod_datatable_server <- function(id, data){
   moduleServer( id, function(input, output, session){
     ns <- session$ns

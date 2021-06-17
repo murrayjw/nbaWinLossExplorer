@@ -7,6 +7,7 @@
 #' @noRd 
 #' @import reactable
 #' @importFrom shiny NS tagList 
+#' @export 
 mod_standings_ui <- function(id, name){
   ns <- NS(id)
   tagList(
@@ -19,6 +20,7 @@ mod_standings_ui <- function(id, name){
 #' standings Server Functions
 #' @import ggplot2
 #' @noRd 
+#' @export 
 mod_standings_server <- function(input, output, session, data, type){
     ns <- session$ns
     

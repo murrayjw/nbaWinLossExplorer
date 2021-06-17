@@ -7,6 +7,7 @@
 #' @noRd 
 #'
 #' @importFrom shiny NS tagList 
+#' @export 
 mod_value_box_ui <- function(id, width){
   ns <- NS(id)
   tagList(
@@ -20,6 +21,7 @@ mod_value_box_ui <- function(id, width){
 #'
 #' @noRd 
 #' @import shinydashboard
+#' @export 
 mod_value_box_server <- function(id, type, data, color = "olive"){
   
   moduleServer( id, 

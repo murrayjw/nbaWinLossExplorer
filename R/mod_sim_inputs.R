@@ -11,6 +11,7 @@
 #' @noRd 
 #' @importFrom shinydashboard box
 #' @importFrom shiny NS tagList column
+#' @export 
 mod_sim_inputs_ui <- function(id, 
                               status="primary"){
   ns <- NS(id)
@@ -55,6 +56,7 @@ mod_sim_inputs_ui <- function(id,
 #' sim_inputs Server Functions
 #'
 #' @noRd 
+#' @export 
 mod_sim_inputs_server <- function(id, data){
  
   moduleServer( id, function(input, output, session){
