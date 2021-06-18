@@ -27,6 +27,5 @@ RUN Rscript -e 'remotes::install_github("abresler/nbastatR@b910ea4ca1b1f6f09fc4e
 RUN mkdir /app
 ADD . /app
 WORKDIR /app
-RUN Rscript -e 'install.packages("./build/nbaWinLossExplorer_0.0.0.9000.tar.gz", repos = NULL)'
 EXPOSE 9999
 CMD R -e "golem::document_and_reload();options('shiny.port'=9999,shiny.host='0.0.0.0');nbaWinLossExplorer::run_app(port = 9999, deploy = 'docker')"
