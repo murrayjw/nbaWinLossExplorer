@@ -13,3 +13,7 @@ $run_dev.*
 ^CODE_OF_CONDUCT\.md$
 ^codecov\.yml$
 rsconnect/
+# Elastic Beanstalk Files
+.elasticbeanstalk/*
+!.elasticbeanstalk/*.cfg.yml
+!.elasticbeanstalk/*.global.yml
