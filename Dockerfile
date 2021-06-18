@@ -28,4 +28,5 @@ RUN mkdir /app
 ADD . /app
 WORKDIR /app
 EXPOSE 9999
-CMD R -e "golem::document_and_reload();options('shiny.port'=9999,shiny.host='0.0.0.0');nbaWinLossExplorer::run_app(port = 9999, deploy = 'docker')"
+CMD ["/usr/bin/shiny-server.sh"]
+
