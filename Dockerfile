@@ -25,10 +25,9 @@ RUN Rscript -e 'remotes::install_version("bslib",upgrade="never", version = "0.2
 RUN Rscript -e 'remotes::install_version("DT",upgrade="never", version = "0.16")'
 RUN Rscript -e 'remotes::install_version("golem",upgrade="never", version = "0.3.1")'
 RUN Rscript -e 'remotes::install_github("abresler/nbastatR@b910ea4ca1b1f6f09fc4ec5334c01add7e238b77")'
-RUN mkdir /build_zone
-ADD . /build_zone
-WORKDIR /build_zone
-RUN R -e 'remotes::install_local(upgrade="never")'
-RUN rm -rf /build_zone
-EXPOSE 80
-CMD R -e "as.data.frame(installed.packages())"
+RUN mkdir /app
+ADD . /app
+WORKDIR /app
+RUN Rscript -e 'install.packages("./build/nbaWinLossExplorer_0.0.0.9000.tar.gz", repos = NULL)'
+EXPOSE 9999
+CMD R -e "golem::document_and_reload();options('shiny.port'=9999,shiny.host='0.0.0.0');nbaWinLossExplorer::run_app(port = 9999, deploy = 'docker')"
