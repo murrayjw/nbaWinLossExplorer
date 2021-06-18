@@ -10,7 +10,6 @@ RUN Rscript -e 'remotes::install_version("dplyr",upgrade="never", version = "1.0
 RUN Rscript -e 'remotes::install_version("httr",upgrade="never", version = "1.4.2")'
 RUN Rscript -e 'remotes::install_version("pkgload",upgrade="never", version = "1.1.0")'
 RUN Rscript -e 'remotes::install_version("attempt",upgrade="never", version = "0.3.1")'
-RUN Rscript -e 'remotes::install_version("shiny",upgrade="never", version = "1.6.0")'
 RUN Rscript -e 'remotes::install_version("ggplot2",upgrade="never", version = "3.3.2")'
 RUN Rscript -e 'remotes::install_version("testthat",upgrade="never", version = "3.0.0")'
 RUN Rscript -e 'remotes::install_version("here",upgrade="never", version = "0.1")'
