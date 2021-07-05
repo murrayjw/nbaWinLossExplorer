@@ -45,6 +45,8 @@ library(nbaWinLossExplorer)
             ungroup()
 ```
 
+Below we can plot all of the matching records.
+
 ``` r
 example_season_plot <- acceptable_records %>%
             ggplot(aes(number_game_team_season, wins, color = id)) +
@@ -58,8 +60,7 @@ example_season_plot <- acceptable_records %>%
                   axis.title.x = element_text(colour = "#032f4f"),
                   axis.title.y = element_text(colour = "#032f4f"))
 
-example_season_plotly <- plotly::ggplotly(example_season_plot)
-example_season_plotly
+example_season_plot
 ```
 
 <img src="man/figures/README-example-plot-1.png" width="100%" />
@@ -91,9 +92,9 @@ summary(season_summary$final_losses)
 #>   19.00   32.25   38.00   38.21   44.75   61.00
 ```
 
-We can see that 86 teams match these requirements, with 65.8% making the
-playoffs. The median number of wins is 40 (IQR 34.5-48.0) and median
-number of losses of 39 (33.0-45.0). So on average, teams finish with
+We can see that 86 teams match these requirements, with 64% making the
+playoffs. The median number of wins is 41 (IQR 35-48) and median number
+of losses of 38 (IQR 32.25-44.75). So on average, teams finish with
 roughly the same number of wins and losses.
 
 For more detail see the package vignette.
