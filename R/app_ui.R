@@ -18,30 +18,17 @@ app_ui <- function(request) {
       # Sidebar page
       dashboardSidebar(
         sidebarMenu(
-          menuItem("Current NBA record", tabName = "current", icon = icon("dashboard")),
           menuItem("Historical Record Explorer", icon = icon("th"),
-                   tabName = "historical", badgeColor = "green")
+                   tabName = "historical", badgeColor = "green"),
+          menuItem("Current NBA record", tabName = "current", icon = icon("dashboard"))
+          
         )
       ),
       
       dashboardBody(
         tabItems(
-          tabItem(tabName = "current",
-                  fluidRow(
-                    tabBox(width = 10,
-                           title = "Standings",
-                           id = "tabset1",
-                           tabPanel("Eastern Conference Standings",
-                            mod_standings_ui("eastern_ui")
-                           ),
-                           tabPanel("Western Conference Standings",
-                                    mod_standings_ui("western_ui")
-                           )
-                    )
-                  )),
-          
           tabItem(tabName = "historical",
-                  h2("Historical Records"),
+                  h2("Record Matching"),
                   fluidRow(
                     column(width = 4,
                     mod_sim_inputs_ui("sim_inputs_ui_1"),
@@ -68,7 +55,20 @@ app_ui <- function(request) {
                            )
                     )
                   )
-          )
+          ),
+          tabItem(tabName = "current",
+                  fluidRow(
+                    tabBox(width = 10,
+                           title = "Standings",
+                           id = "tabset1",
+                           tabPanel("Eastern Conference Standings",
+                                    mod_standings_ui("eastern_ui")
+                           ),
+                           tabPanel("Western Conference Standings",
+                                    mod_standings_ui("western_ui")
+                           )
+                    )
+                  ))
         )
       )
       
