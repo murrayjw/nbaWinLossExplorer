@@ -25,6 +25,8 @@ Imports:
     shinycustomloader,
     pkgload
 Encoding: UTF-8
+Remotes:
+    abresler/nbastatR
 LazyData: true
 RoxygenNote: 7.1.1
 Suggests: 
